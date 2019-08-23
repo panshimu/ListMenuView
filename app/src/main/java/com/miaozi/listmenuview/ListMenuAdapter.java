@@ -14,8 +14,10 @@ import java.util.List;
  * on 2019/8/23
  */
 public class ListMenuAdapter extends BaseListMenuAdapter{
+
     private List<String> mData;
     private LayoutInflater mInflater;
+
 
     public ListMenuAdapter(Context context,List<String> mData) {
         this.mData = mData;
@@ -40,6 +42,12 @@ public class ListMenuAdapter extends BaseListMenuAdapter{
         View contentView = mInflater.inflate(R.layout.ui_content_view,parent,false);
         TextView tvContent = contentView.findViewById(R.id.tv_content);
         tvContent.setText(mData.get(position));
+        tvContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                closeMenu();
+            }
+        });
         return contentView;
     }
 

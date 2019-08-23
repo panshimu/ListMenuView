@@ -45,6 +45,8 @@ public class ListMenuView extends LinearLayout {
     //打开动画
     private AnimatorSet mOpenAnimatorSet;
 
+    private ListMenuObserver mObserver;
+
     public ListMenuView(Context context) {
         this(context,null);
     }
@@ -57,6 +59,7 @@ public class ListMenuView extends LinearLayout {
         super(context, attrs, defStyleAttr);
         initLayout();
     }
+
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -120,10 +123,22 @@ public class ListMenuView extends LinearLayout {
      * @param adapter
      */
     public void setAdapter(BaseListMenuAdapter adapter){
+
+
         if(adapter == null){
             throw new IllegalArgumentException("请设置->BaseListMenuAdapter");
         }
+
+        //先反注册 防止多次注册
+        if(this.mAdapter != null && mObserver!=null){
+            mAdapter.unRegisterObserver(mObserver);
+        }
+
         this.mAdapter = adapter;
+
+        mObserver = new ListMenuObserver();
+        mAdapter.registerObserver(mObserver);
+
         for (int i = 0; i < mAdapter.getCount(); i++) {
             View tabView = mAdapter.getTabView(i, mTabView);
             if(tabView != null){
@@ -262,5 +277,13 @@ public class ListMenuView extends LinearLayout {
          if(!mAnimationExecute) {
              mCloseAnimatorSet.start();
          }
+    }
+
+
+    public class ListMenuObserver extends BaseMenuObserver{
+        @Override
+        public void closeMenu() {
+            ListMenuView.this.closeContentView();
+        }
     }
 }
